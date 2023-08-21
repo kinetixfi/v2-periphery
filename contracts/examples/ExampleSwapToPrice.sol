@@ -1,14 +1,14 @@
 pragma solidity =0.6.6;
 
-import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
+import '@kinetix/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
 import '@uniswap/lib/contracts/libraries/Babylonian.sol';
 import '@uniswap/lib/contracts/libraries/TransferHelper.sol';
 
-import '../libraries/UniswapV2LiquidityMathLibrary.sol';
+import '../libraries/KinetixV2LiquidityMathLibrary.sol';
 import '../interfaces/IERC20.sol';
 import '../interfaces/IUniswapV2Router01.sol';
 import '../libraries/SafeMath.sol';
-import '../libraries/UniswapV2Library.sol';
+import '../libraries/KinetixV2Library.sol';
 
 contract ExampleSwapToPrice {
     using SafeMath for uint256;
@@ -35,17 +35,19 @@ contract ExampleSwapToPrice {
         uint256 deadline
     ) public {
         // true price is expressed as a ratio, so both values must be non-zero
-        require(truePriceTokenA != 0 && truePriceTokenB != 0, "ExampleSwapToPrice: ZERO_PRICE");
+        require(truePriceTokenA != 0 && truePriceTokenB != 0, 'ExampleSwapToPrice: ZERO_PRICE');
         // caller can specify 0 for either if they wish to swap in only one direction, but not both
-        require(maxSpendTokenA != 0 || maxSpendTokenB != 0, "ExampleSwapToPrice: ZERO_SPEND");
+        require(maxSpendTokenA != 0 || maxSpendTokenB != 0, 'ExampleSwapToPrice: ZERO_SPEND');
 
         bool aToB;
         uint256 amountIn;
         {
-            (uint256 reserveA, uint256 reserveB) = UniswapV2Library.getReserves(factory, tokenA, tokenB);
-            (aToB, amountIn) = UniswapV2LiquidityMathLibrary.computeProfitMaximizingTrade(
-                truePriceTokenA, truePriceTokenB,
-                reserveA, reserveB
+            (uint256 reserveA, uint256 reserveB) = KinetixV2Library.getReserves(factory, tokenA, tokenB);
+            (aToB, amountIn) = KinetixV2LiquidityMathLibrary.computeProfitMaximizingTrade(
+                truePriceTokenA,
+                truePriceTokenB,
+                reserveA,
+                reserveB
             );
         }
 
