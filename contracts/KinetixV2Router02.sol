@@ -16,7 +16,7 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
     address public immutable override WETH;
 
     modifier ensure(uint deadline) {
-        require(deadline >= block.timestamp, 'UniswapV2Router: EXPIRED');
+        require(deadline >= block.timestamp, 'KinetixV2Router02: EXPIRED');
         _;
     }
 
@@ -48,12 +48,12 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
         } else {
             uint amountBOptimal = KinetixV2Library.quote(amountADesired, reserveA, reserveB);
             if (amountBOptimal <= amountBDesired) {
-                require(amountBOptimal >= amountBMin, 'UniswapV2Router: INSUFFICIENT_B_AMOUNT');
+                require(amountBOptimal >= amountBMin, 'KinetixV2Router02: INSUFFICIENT_B_AMOUNT');
                 (amountA, amountB) = (amountADesired, amountBOptimal);
             } else {
                 uint amountAOptimal = KinetixV2Library.quote(amountBDesired, reserveB, reserveA);
                 assert(amountAOptimal <= amountADesired);
-                require(amountAOptimal >= amountAMin, 'UniswapV2Router: INSUFFICIENT_A_AMOUNT');
+                require(amountAOptimal >= amountAMin, 'KinetixV2Router02: INSUFFICIENT_A_AMOUNT');
                 (amountA, amountB) = (amountAOptimal, amountBDesired);
             }
         }
@@ -116,8 +116,8 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
         (uint amount0, uint amount1) = IUniswapV2Pair(pair).burn(to);
         (address token0, ) = KinetixV2Library.sortTokens(tokenA, tokenB);
         (amountA, amountB) = tokenA == token0 ? (amount0, amount1) : (amount1, amount0);
-        require(amountA >= amountAMin, 'UniswapV2Router: INSUFFICIENT_A_AMOUNT');
-        require(amountB >= amountBMin, 'UniswapV2Router: INSUFFICIENT_B_AMOUNT');
+        require(amountA >= amountAMin, 'KinetixV2Router02: INSUFFICIENT_A_AMOUNT');
+        require(amountB >= amountBMin, 'KinetixV2Router02: INSUFFICIENT_B_AMOUNT');
     }
 
     function removeLiquidityETH(
@@ -245,7 +245,7 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
         uint deadline
     ) external virtual override ensure(deadline) returns (uint[] memory amounts) {
         amounts = KinetixV2Library.getAmountsOut(factory, amountIn, path);
-        require(amounts[amounts.length - 1] >= amountOutMin, 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
+        require(amounts[amounts.length - 1] >= amountOutMin, 'KinetixV2Router02: INSUFFICIENT_OUTPUT_AMOUNT');
         TransferHelper.safeTransferFrom(
             path[0],
             msg.sender,
@@ -263,7 +263,7 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
         uint deadline
     ) external virtual override ensure(deadline) returns (uint[] memory amounts) {
         amounts = KinetixV2Library.getAmountsIn(factory, amountOut, path);
-        require(amounts[0] <= amountInMax, 'UniswapV2Router: EXCESSIVE_INPUT_AMOUNT');
+        require(amounts[0] <= amountInMax, 'KinetixV2Router02: EXCESSIVE_INPUT_AMOUNT');
         TransferHelper.safeTransferFrom(
             path[0],
             msg.sender,
@@ -279,9 +279,9 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
         address to,
         uint deadline
     ) external payable virtual override ensure(deadline) returns (uint[] memory amounts) {
-        require(path[0] == WETH, 'UniswapV2Router: INVALID_PATH');
+        require(path[0] == WETH, 'KinetixV2Router02: INVALID_PATH');
         amounts = KinetixV2Library.getAmountsOut(factory, msg.value, path);
-        require(amounts[amounts.length - 1] >= amountOutMin, 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
+        require(amounts[amounts.length - 1] >= amountOutMin, 'KinetixV2Router02: INSUFFICIENT_OUTPUT_AMOUNT');
         IWETH(WETH).deposit{value: amounts[0]}();
         assert(IWETH(WETH).transfer(KinetixV2Library.pairFor(factory, path[0], path[1]), amounts[0]));
         _swap(amounts, path, to);
@@ -294,9 +294,9 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
         address to,
         uint deadline
     ) external virtual override ensure(deadline) returns (uint[] memory amounts) {
-        require(path[path.length - 1] == WETH, 'UniswapV2Router: INVALID_PATH');
+        require(path[path.length - 1] == WETH, 'KinetixV2Router02: INVALID_PATH');
         amounts = KinetixV2Library.getAmountsIn(factory, amountOut, path);
-        require(amounts[0] <= amountInMax, 'UniswapV2Router: EXCESSIVE_INPUT_AMOUNT');
+        require(amounts[0] <= amountInMax, 'KinetixV2Router02: EXCESSIVE_INPUT_AMOUNT');
         TransferHelper.safeTransferFrom(
             path[0],
             msg.sender,
@@ -315,9 +315,9 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
         address to,
         uint deadline
     ) external virtual override ensure(deadline) returns (uint[] memory amounts) {
-        require(path[path.length - 1] == WETH, 'UniswapV2Router: INVALID_PATH');
+        require(path[path.length - 1] == WETH, 'KinetixV2Router02: INVALID_PATH');
         amounts = KinetixV2Library.getAmountsOut(factory, amountIn, path);
-        require(amounts[amounts.length - 1] >= amountOutMin, 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
+        require(amounts[amounts.length - 1] >= amountOutMin, 'KinetixV2Router02: INSUFFICIENT_OUTPUT_AMOUNT');
         TransferHelper.safeTransferFrom(
             path[0],
             msg.sender,
@@ -335,9 +335,9 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
         address to,
         uint deadline
     ) external payable virtual override ensure(deadline) returns (uint[] memory amounts) {
-        require(path[0] == WETH, 'UniswapV2Router: INVALID_PATH');
+        require(path[0] == WETH, 'KinetixV2Router02: INVALID_PATH');
         amounts = KinetixV2Library.getAmountsIn(factory, amountOut, path);
-        require(amounts[0] <= msg.value, 'UniswapV2Router: EXCESSIVE_INPUT_AMOUNT');
+        require(amounts[0] <= msg.value, 'KinetixV2Router02: EXCESSIVE_INPUT_AMOUNT');
         IWETH(WETH).deposit{value: amounts[0]}();
         assert(IWETH(WETH).transfer(KinetixV2Library.pairFor(factory, path[0], path[1]), amounts[0]));
         _swap(amounts, path, to);
@@ -384,7 +384,7 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
         _swapSupportingFeeOnTransferTokens(path, to);
         require(
             IERC20(path[path.length - 1]).balanceOf(to).sub(balanceBefore) >= amountOutMin,
-            'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT'
+            'KinetixV2Router02: INSUFFICIENT_OUTPUT_AMOUNT'
         );
     }
 
@@ -394,7 +394,7 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
         address to,
         uint deadline
     ) external payable virtual override ensure(deadline) {
-        require(path[0] == WETH, 'UniswapV2Router: INVALID_PATH');
+        require(path[0] == WETH, 'KinetixV2Router02: INVALID_PATH');
         uint amountIn = msg.value;
         IWETH(WETH).deposit{value: amountIn}();
         assert(IWETH(WETH).transfer(KinetixV2Library.pairFor(factory, path[0], path[1]), amountIn));
@@ -402,7 +402,7 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
         _swapSupportingFeeOnTransferTokens(path, to);
         require(
             IERC20(path[path.length - 1]).balanceOf(to).sub(balanceBefore) >= amountOutMin,
-            'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT'
+            'KinetixV2Router02: INSUFFICIENT_OUTPUT_AMOUNT'
         );
     }
 
@@ -413,7 +413,7 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
         address to,
         uint deadline
     ) external virtual override ensure(deadline) {
-        require(path[path.length - 1] == WETH, 'UniswapV2Router: INVALID_PATH');
+        require(path[path.length - 1] == WETH, 'KinetixV2Router02: INVALID_PATH');
         TransferHelper.safeTransferFrom(
             path[0],
             msg.sender,
@@ -422,7 +422,7 @@ contract KinetixV2Router02 is IUniswapV2Router02 {
         );
         _swapSupportingFeeOnTransferTokens(path, address(this));
         uint amountOut = IERC20(WETH).balanceOf(address(this));
-        require(amountOut >= amountOutMin, 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
+        require(amountOut >= amountOutMin, 'KinetixV2Router02: INSUFFICIENT_OUTPUT_AMOUNT');
         IWETH(WETH).withdraw(amountOut);
         TransferHelper.safeTransferETH(to, amountOut);
     }
